@@ -1,11 +1,10 @@
-#=
 USAGE
 1. Initialize Julia in your device
-2. Run the whole file
-3. In terminal, run:
+2. In terminal, run:
+       include("your/path/OSCAR.jl")
+4. In terminal, run:
     startOSCAR()
-4. Follow the instructions and see the results in terminal
-=#
+5. Follow the instructions and see the results in terminal
 
 
 

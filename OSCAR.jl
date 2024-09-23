@@ -2886,19 +2886,3 @@ function startOSCAR()
         end
     end
 end
-
-#=
-USAGE
-1. Initialize Julia in your device
-2. Run the whole file
-3. In terminal, run:
-    startOSCAR()
-4. Follow the instructions and see the results in terminal
-=#
-
-# img = load("C:\\Users\\CBMSO\\Desktop\\20_40_processed.tif")
-# img = binarizeImage(Float64.(img))
-
-# for i = 1:size(data2d[9],1)
-#     println(tempEl[2,:] .== data2d[9][i,:])
-# end

@@ -854,8 +854,8 @@ function findObjectsWatershed(binaryImage::Matrix{Int}, useInHouseAlgorithm::Boo
                 return findObjects(_labeledImage)
             end
         catch e
-            @warn("Watershed algorithm failed, using basic image segmentation.")
-            # println(e)
+            # @warn("Watershed algorithm failed, using basic image segmentation.")
+            
             if returnLabeledImage
                 return labelBinaryImage(binaryImage)
             else
@@ -2863,14 +2863,14 @@ function startOSCAR()
     r::Bool = ask_dialog("Welcome to OSCAR!", "Select a folder", "Select an image")
     path::String = ""
     if (r)
-        # try
+        try
             path = open_dialog("Select your image")
             warn_dialog("Follow the process in terminal after closing this dialog.")
             println("Analyzing: " * path)
             analyzeImage(path,dirname(path))
-        # catch (e)
-            # warn_dialog("Oops! Something went wrong...")
-        # end
+        catch (e)
+            warn_dialog("Oops! Something went wrong...")
+        end
     else
         try
             path = open_dialog("Select your folder", action=GtkFileChooserAction.SELECT_FOLDER)

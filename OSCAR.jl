@@ -104,6 +104,12 @@ catch
     Pkg.add("Colors")
     using Colors
 end
+try
+    using ProgressBars
+catch
+    Pkg.add("ProgressBars")
+    using ProgressBars
+end
 
 
 #Define functions and structures
@@ -855,7 +861,7 @@ function findObjectsWatershed(binaryImage::Matrix{Int}, useInHouseAlgorithm::Boo
             end
         catch e
             # @warn("Watershed algorithm failed, using basic image segmentation.")
-            
+            # println(e)
             if returnLabeledImage
                 return labelBinaryImage(binaryImage)
             else
@@ -968,7 +974,7 @@ function regionPropsStack(image::Array{Int,3}, cartesianAxis::String, useWatersh
     axis::Int = (cartesianAxis == "z") ? 3 : ((cartesianAxis == "y") ? 1 : 2)
 
     #Threads.@threads :dynamic
-    for i in 1:size(image)[axis]
+    for i in tqdm(1:size(image)[axis])
         #Get image slice according to axis
         _image = (axis == 3) ? image[:, :, i] : ((axis == 1) ? image[i, :, :] : image[:, i, :])
         if useWatershed
@@ -2697,13 +2703,15 @@ Splits a 3D binary image into objects based on connected components and shape pr
 * The core object splitting logic is shared with the `ObjSplitter3D` function.
 * The `counter_cin` and `count_pearson` counters have unclear purposes.
 """
-function ObjSplitter3D_fromBinaryImage(img, nCh=1, zparams::Union{Vector{Int},Nothing}=nothing)
+function ObjSplitter3D_fromBinaryImage(img, zparams::Union{Vector{Int},Nothing}=nothing, nCh=1)
     #
     # data2d, data, sizesPlanes= data2d_chunking(file, 3, 4, 2, 1, 5, 8, 9, 19, nCh);
     # img = Int.(load(file))
+    println("Getting 2D Objects")
     r = regionPropsStack(img, "z", true)
     if typeof(zparams) == Nothing
         e = generateEllipsesImage(r, size(img)[1:2])
+        println("Calculating z params")
         xz = regionPropsStack(e, "y", true)
         zp = min_max_Zdef_fromJuliaRegionProps(xz)
         minZ = zp.minZ
@@ -2745,7 +2753,8 @@ function ObjSplitter3D_fromBinaryImage(img, nCh=1, zparams::Union{Vector{Int},No
     counter = 0
     counter_cin = 0
     count_pearson = 0
-    for i in 1:(size(data2d_copy, 1))-borderEffectLow
+    println("Generating 3D objects")
+    for i in tqdm(1:(size(data2d_copy, 1))-borderEffectLow)
         sliceZ = i
         for j in 1:size(data2d_copy[i], 1)
             indexR = j
@@ -2839,7 +2848,6 @@ function ObjSplitter3D_fromBinaryImage(img, nCh=1, zparams::Union{Vector{Int},No
     return Objects3D(preok, k, inis, noInits), df
 end
 
-
 #Functions to initialize OSCAR
 function analyzeImage(path::String, rootpath::String)
     image::Union{Matrix{Int},Array{Int,3}} = binarizeImage(Float64.(load(path)))
@@ -2911,11 +2919,6 @@ function startOSCAR()
     set_gtk_property!(label_med_z, :visible, false)
     set_gtk_property!(label_max_z, :visible, false)
 
-    # Create a progress bar
-    progress_bar = GtkProgressBar()
-    set_gtk_property!(progress_bar, :visible, false)  # Initially hidden
-
-
     # Function to handle checkbox toggling (show/hide manual zparams input)
     function on_checkbox_toggled(widget)
         is_checked = get_gtk_property(widget, :active, Bool)
@@ -2948,10 +2951,6 @@ function startOSCAR()
 
     # Function to handle the button press
     function on_button_proceed_clicked(widget)
-        
-        # # Show the progress bar and start pulsing
-        set_gtk_property!(progress_bar, :visible, true)
-        # Gtk.start_pulse(progress_bar)
         
         zparams = []  # Placeholder for zparams
 
@@ -2993,10 +2992,6 @@ function startOSCAR()
                 warn_dialog("Oops! Something went wrong during analysis...")
             end
         end
-
-        # Stop the progress bar and hide it
-        # Gtk.stop_pulse(progress_bar)
-        set_gtk_property!(progress_bar, :visible, false)
 
     end
 

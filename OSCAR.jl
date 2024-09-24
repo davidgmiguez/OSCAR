@@ -2860,29 +2860,164 @@ function analyzeImage(path::String, rootpath::String)
 end
 
 function startOSCAR()
+    # Step 1: Ask the user to choose an image or folder
     r::Bool = ask_dialog("Welcome to OSCAR!", "Select a folder", "Select an image")
     path::String = ""
+    
     if (r)
         try
             path = open_dialog("Select your image")
-            warn_dialog("Follow the process in terminal after closing this dialog.")
-            println("Analyzing: " * path)
-            analyzeImage(path,dirname(path))
-        catch (e)
-            warn_dialog("Oops! Something went wrong...")
+            # warn_dialog("Follow the process in terminal after closing this dialog.")
+            println("Selected image: " * path)
+        catch e
+            warn_dialog("Oops! Something went wrong while selecting the image...")
+            return  # Exit if there's an error
         end
     else
         try
             path = open_dialog("Select your folder", action=GtkFileChooserAction.SELECT_FOLDER)
-            warn_dialog("Follow the process in terminal after closing this dialog.")
-            for file in readdir(path)
-                if endswith(lowercase(file), ".tif")
-                    println("Analyzing: " * file)
-                    analyzeImage(path * "\\" * file, path)
-                end
-            end
-        catch (e)
-            warn_dialog("Oops! Something went wrong...")
+            # warn_dialog("Follow the process in terminal after closing this dialog.")
+            println("Selected folder: " * path)
+        catch e
+            warn_dialog("Oops! Something went wrong while selecting the folder...")
+            return  # Exit if there's an error
         end
     end
+
+    # Step 2: Ask if the user wants to use autocalculated zparams or input manually
+    # Create a new window for the checkbox input
+    win = GtkWindow("Provide zparams", 400, 200);
+    vbox = GtkBox(:v);
+
+    # Create the checkbox for zparams selection
+    checkbox = GtkCheckButton("Use autocalculated zparams");
+    
+    # Create a label for instructions
+    instruction_label = GtkLabel("Tick the box to use autocalculated zparams, or leave unticked to provide manually.");
+
+    # Create entry boxes for manual zparams input (initially hidden)
+    label_manual_zparams = GtkLabel("Provide manual zparams:");
+    entry_z1 = GtkEntry()
+    entry_z2 = GtkEntry()
+    entry_z3 = GtkEntry()
+    label_min_z = GtkLabel("Min Z:")
+    label_med_z = GtkLabel("Med Z:")
+    label_max_z = GtkLabel("Max Z:")
+    set_gtk_property!(label_manual_zparams, :visible, false)
+    set_gtk_property!(entry_z1, :visible, false)
+    set_gtk_property!(entry_z2, :visible, false)
+    set_gtk_property!(entry_z3, :visible, false)
+    set_gtk_property!(label_min_z, :visible, false)
+    set_gtk_property!(label_med_z, :visible, false)
+    set_gtk_property!(label_max_z, :visible, false)
+
+    # Create a progress bar
+    progress_bar = GtkProgressBar()
+    set_gtk_property!(progress_bar, :visible, false)  # Initially hidden
+
+
+    # Function to handle checkbox toggling (show/hide manual zparams input)
+    function on_checkbox_toggled(widget)
+        is_checked = get_gtk_property(widget, :active, Bool)
+        if is_checked  # Check if the checkbox is ticked
+            # If checkbox is ticked, hide manual zparams fields
+            set_gtk_property!(label_manual_zparams, :visible, false)
+            set_gtk_property!(entry_z1, :visible, false)
+            set_gtk_property!(entry_z2, :visible, false)
+            set_gtk_property!(entry_z3, :visible, false)
+            set_gtk_property!(label_min_z, :visible, false)
+            set_gtk_property!(label_med_z, :visible, false)
+            set_gtk_property!(label_max_z, :visible, false)
+        else
+            # If checkbox is unticked, show manual zparams fields
+            set_gtk_property!(label_manual_zparams, :visible, true)
+            set_gtk_property!(entry_z1, :visible, true)
+            set_gtk_property!(entry_z2, :visible, true)
+            set_gtk_property!(entry_z3, :visible, true)
+            set_gtk_property!(label_min_z, :visible, true)
+            set_gtk_property!(label_med_z, :visible, true)
+            set_gtk_property!(label_max_z, :visible, true)
+        end
+    end
+
+    # Connect the checkbox toggle signal to the function
+    signal_connect(on_checkbox_toggled, checkbox, "toggled");
+
+    # Create a button to proceed with the analysis after the user makes the choice
+    button_proceed = GtkButton("Proceed")
+
+    # Function to handle the button press
+    function on_button_proceed_clicked(widget)
+        
+        # # Show the progress bar and start pulsing
+        set_gtk_property!(progress_bar, :visible, true)
+        # Gtk.start_pulse(progress_bar)
+        
+        zparams = []  # Placeholder for zparams
+
+        if !get_gtk_property(checkbox, :active, Bool)
+            # Get zparams manually from the user
+            z1 = parse(Int, get_gtk_property(entry_z1, :text, String))  # Get the text directly from GtkEntry
+            z2 = parse(Int, get_gtk_property(entry_z2, :text, String))  # Use `string` function instead of GtkEntryBuffer
+            z3 = parse(Int, get_gtk_property(entry_z3, :text, String))
+            zparams = [z1, z2, z3]
+            println("Manual zparams provided: $zparams")
+        else
+            # Use autocalculated zparams (replace with actual calculation if needed)
+            zparams = nothing  # Placeholder for autocalculated values
+            println("Using autocalculated zparams")
+        end
+
+        # Close the window after proceeding
+        destroy(win)
+
+        # Process the selected image or folder using the chosen zparams
+        if (r)
+            try
+                # warn_dialog("Follow the process in terminal after closing this dialog.")
+                println("Analyzing: " * path)
+                analyzeImage(path, dirname(path), zparams)
+            catch e
+                warn_dialog("Oops! Something went wrong during analysis...")
+            end
+        else
+            try
+                warn_dialog("Follow the process in terminal after closing this dialog.")
+                for file in readdir(path)
+                    if endswith(lowercase(file), ".tif")
+                        println("Analyzing: " * file)
+                        analyzeImage(path * "\\" * file, path, zparams)
+                    end
+                end
+            catch e
+                warn_dialog("Oops! Something went wrong during analysis...")
+            end
+        end
+
+        # Stop the progress bar and hide it
+        # Gtk.stop_pulse(progress_bar)
+        set_gtk_property!(progress_bar, :visible, false)
+
+    end
+
+    # Connect the button press signal to the function
+    signal_connect(on_button_proceed_clicked, button_proceed, "clicked");
+
+    # Add widgets to the vertical box (vbox)
+    push!(vbox, instruction_label)
+    push!(vbox, checkbox)
+    push!(vbox, label_manual_zparams)
+    push!(vbox, label_min_z)
+    push!(vbox, entry_z1)
+    push!(vbox, label_med_z)
+    push!(vbox, entry_z2)
+    push!(vbox, label_max_z)
+    push!(vbox, entry_z3)
+    push!(vbox, button_proceed)
+    push!(vbox, progress_bar)
+    push!(win, vbox)
+
+    # Show the window and start the application
+    showall(win)
+    return nothing
 end

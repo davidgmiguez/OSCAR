@@ -3009,7 +3009,6 @@ function startOSCAR()
     push!(vbox, label_max_z)
     push!(vbox, entry_z3)
     push!(vbox, button_proceed)
-    push!(vbox, progress_bar)
     push!(win, vbox)
 
     # Show the window and start the application

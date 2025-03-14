@@ -33,6 +33,6 @@ This repository contains the programs and scripts used in the manuscript titled 
    ```julia
    startOSCAR()
    
-4. **Follow On-Screen Instructions:**
+5. **Follow On-Screen Instructions:**
    Follow the prompts displayed in the terminal to view the results.
    

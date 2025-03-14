@@ -21,18 +21,21 @@ This repository contains the programs and scripts used in the manuscript titled 
 ## Usage Instructions
 
 1. **Initialize Julia:**  
-  Ensure Julia is installed and initialized on your device.
+   Ensure Julia is installed and initialized on your device.
 
-2. **Include the OSCAR Script:**
-     Open a terminal and run:
+2. **Include the OSCAR Script:**  
+   Open a terminal and run:
+   
    ```julia
    include("your/path/OSCAR.jl")
-   
-4. **Start OSCAR:**
-     In the terminal, run:
+
+3. **Start OSCAR:**
+   In the terminal, run:
+
    ```julia
    startOSCAR()
-   
-5. **Follow On-Screen Instructions:**
+
+4. **Follow On-Screen Instructions:**
      Follow the prompts displayed in the terminal to view the results.
+     
    

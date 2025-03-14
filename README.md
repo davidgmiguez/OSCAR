@@ -31,6 +31,7 @@ This repository contains the programs and scripts used in the manuscript titled 
    ```
 
 3. **Start OSCAR:**
+   
    In the terminal, run:
 
    ```julia
@@ -38,6 +39,7 @@ This repository contains the programs and scripts used in the manuscript titled 
    ```
 
 5. **Follow On-Screen Instructions:**
+   
    Follow the prompts displayed in the terminal to view the results.
      
    

@@ -1,18 +1,38 @@
-# Release notes OSCAR v1.4.0
+# OSCAR v1.4.0 Release Notes
 
-New OSCAR version available. It now accepts either tiff files and txt files. For the appropiate generation of txt files we have included a Fiji script, charge your own processed multichannel image in Fiji and obtain the needed txt for running OSCAR. This method greatly increases computational speed. On the other hand for single-channel tiff files OSCAR now includes an optional default processing pipeline.
+We are pleased to announce the release of **OSCAR v1.4.0**. This version brings several improvements and new features:
 
-###
+- **Enhanced File Support:**  
+  OSCAR now accepts both TIFF and TXT files. A new Fiji script is included to generate the necessary TXT files. Simply load your processed multichannel image in Fiji, and the script will produce the required TXT file, significantly increasing computational speed.
 
-Please find in ths repository the relevalt programs and scripts used in the mansucript entited "High-throughput three-dimensional characterization of morphogenetic signals during the formation of the vertebrate retina"
-All code is written in julia 
-- phantom.ipynb includes teh functions and scripts to generate the digital images uses as groudn thruth to comapre the performance of 3D segmentation solutions.
-- src folder includes all necessary functions for OSCAR standalone application, Fiji script to obtain txt files and a test image.
+- **Optional Processing Pipeline:**  
+  For single-channel TIFF files, OSCAR now includes an optional default processing pipeline.
 
-# USAGE
-1. Initialize Julia in your device
-2. In terminal, run:
-       include("your/path/OSCAR.jl")
-4. In terminal, run:
-    startOSCAR()
-5. Follow the instructions and see the results in terminal
+## Repository Contents
+
+This repository contains the programs and scripts used in the manuscript titled **"High-throughput three-dimensional characterization of morphogenetic signals during the formation of the vertebrate retina."** All code is written in Julia.
+
+- **phantom.ipynb:**  
+  Contains functions and scripts to generate digital images used as ground truth for comparing the performance of 3D segmentation solutions.
+
+- **src folder:**  
+  Includes all the necessary functions for the standalone OSCAR application, the Fiji script for generating TXT files, and a test image.
+
+## Usage Instructions
+
+1. **Initialize Julia:**  
+   Ensure Julia is installed and initialized on your device.
+
+2. **Include the OSCAR Script:**  
+   Open a terminal and run:
+   ```julia
+   include("your/path/OSCAR.jl")
+   
+3. **Start OSCAR:**
+   In the terminal, run:
+   ```julia
+   startOSCAR()
+   
+4. **Follow On-Screen Instructions:**
+   Follow the prompts displayed in the terminal to view the results.
+   

@@ -30,16 +30,12 @@ This repository contains the programs and scripts used in the manuscript titled 
    include("your/path/OSCAR.jl")
    ```
 
-3. **Start OSCAR:**
-   
+3. **Start OSCAR:**  
    In the terminal, run:
 
    ```julia
    startOSCAR()
    ```
 
-5. **Follow On-Screen Instructions:**
-   
+4. **Follow On-Screen Instructions:**  
    Follow the prompts displayed in the terminal to view the results.
-     
-   

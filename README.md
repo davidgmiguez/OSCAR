@@ -10,7 +10,7 @@ We are pleased to announce the release of **OSCAR v1.4.0**. This version brings 
 
 ## Repository Contents
 
-This repository contains the programs and scripts used in the manuscript titled **"High-throughput three-dimensional characterization of morphogenetic signals during the formation of the vertebrate retina."** All code is written in Julia.
+This repository contains the programs and scripts used in the manuscript titled **"Object Stitching by Clustering of Adjacent Regions designed for accurate quantification in dense three-dimensional tissues."** All code is written in Julia.
 
 - **phantom.ipynb:**  
   Contains functions and scripts to generate digital images used as ground truth for comparing the performance of 3D segmentation solutions.

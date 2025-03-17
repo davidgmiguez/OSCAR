@@ -3602,5 +3602,6 @@ function startOSCAR()
 
     showall(win)
     on_zparam_checkbox_toggled(zparam_checkbox)
+    on_nchannels_checkbox_toggled(nchannels_checkbox)
     return nothing
 end

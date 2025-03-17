@@ -1,6 +1,7 @@
 setBatchMode("hide"); 
 run("Set Measurements...", "area mean standard modal min centroid center perimeter bounding fit shape feret's integrated median skewness kurtosis area_fraction stack limit redirect=None decimal=2");
 //
+setForegroundColor(255, 255, 255);
 input = getDirectory("Input...");
 files = getFileList(input);
 ch = getNumber("Enter the nuclei channel number:", 1);
@@ -88,7 +89,7 @@ for (i = 0; i < files.length; i++) {
 					selectWindow("C"+newChannels[i]+"-"+name1+""); n_channels[key]=getValue("RawIntDen");
 				}
 			}
-			selectWindow("base2");setSlice(zref);
+			selectWindow("base2"); setSlice(zref);
 			selectWindow("base2"); makeEllipse(xv1, yv1, xv2, yv2, b/a);
 			selectWindow("base2"); run("Fill", "slice");
 			selectWindow("base2"); run("Select None");	
@@ -241,3 +242,4 @@ for (i = 0; i < files.length; i++) {
 		close(); 		
 	}
 }
+//setBatchMode("exit and display");

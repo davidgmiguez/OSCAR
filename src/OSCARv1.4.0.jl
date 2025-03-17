@@ -3551,7 +3551,7 @@ function startOSCAR()
             elseif file_type == :tiff
                 try
                     println("Analyzing: " * path)
-                    analyzeImage_new(path, dirname(path), zparams, process)
+                    analyzeImage(path, dirname(path), zparams, process)
                     println("Analysis completed!")
                 catch
                     warn_dialog("Oops! Something went wrong during analysis...")
@@ -3586,7 +3586,7 @@ function startOSCAR()
 
                 elseif endswith(lowercase(file), ".tif")
                     println("Analyzing: " * file)
-                    analyzeImage_new(file_path, path, zparams, process)
+                    analyzeImage(file_path, path, zparams, process)
                     println("Analysis completed!")
                 end
             end

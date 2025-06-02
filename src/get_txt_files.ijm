@@ -41,7 +41,7 @@ for (i = 0; i < files.length; i++) {
 		selectWindow("nuclei"); setThreshold(1,255); selectWindow("nuclei");
 		setOption("BlackBackground", true); run("Convert to Mask", "method=Default background=Dark black");
 		selectWindow("nuclei"); run("Watershed", "stack");
-		selectWindow("nuclei"); run("Analyze Particles...", "size=0-Infinity stack");
+		selectWindow("nuclei"); run("Analyze Particles...", "size=0-Infinity display stack");
 		selectWindow("nuclei"); resetThreshold();
 	
 		slice = newArray(nResults); xc = newArray(nResults); yc = newArray(nResults);
@@ -187,7 +187,7 @@ for (i = 0; i < files.length; i++) {
 		selectWindow("xz_base"); run("Watershed", "stack");
 		selectWindow("xz_base"); setThreshold(1,255); 
 		run("Clear Results");
-		run("Analyze Particles...", "size=0-Infinity stack");
+		run("Analyze Particles...", "size=0-Infinity display stack");
 		selectWindow("xz_base"); resetThreshold();
 		sliceZ = newArray(nResults); xcZ = newArray(nResults); ycZ = newArray(nResults); 
 		areaZ = newArray(nResults); angleZ = newArray(nResults); 

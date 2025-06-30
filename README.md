@@ -30,7 +30,7 @@ This repository contains the programs and scripts used in the manuscript titled 
    Open a terminal and run:
    
    ```julia
-   include("your/path/OSCAR.jl")
+   include("your/path/OSCARvX.X.X.jl")
    ```
 
 4. **Start OSCAR:**  

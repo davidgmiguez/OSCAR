@@ -3,7 +3,7 @@ OSCAR:
 - Julia version: 1.10.4
 - Author: Míguez Lab.
 - Date: 2024-09-24
-- Code version: 1.6.0
+- Code version: 1.6.1
 =#
 
 #Import necessary packages
@@ -2032,7 +2032,7 @@ function Line_3D(; x::Array{Float64}=ones(0), y::Array{Float64}=ones(0), z::Arra
     yref = betaY[2] * z[end, 2] + 1 + betaY[1]
     vx = xpred[end] - xpred[1]
     vy = ypred[end] - ypred[1]
-    vz = z[end, 2] - z[1, 2]
+    vz = z[end, 2] - z[1, 2] + 1
     vmodule = sqrt(vx^2 + vy^2 + vz^2)
     return Vector3D(xpred, ypred, xcenter, ycenter, zcenter, xref, yref, betaX, betaY, vx, vy, vz, vmodule)
 end
@@ -3403,13 +3403,13 @@ function analyzeImage(path::String, rootpath::String, result_path::String, zpara
         summ = summary_objs(objc3d)
         split(basename(path),".")[1]
         # CSV.write("$result_path\\"*split(basename(path),".")[1]*".txt", df, delim = '\t')
+        CSV.write("$result_path\\Summary_"*split(basename(path),".")[1]*".txt", summ, delim = '\t')
+        println("   >> " * string(length(objc3d.preok)) * " objects found.")
         oscar_output = draw_3D_ellipses_from_summary(summ,dims)
         # overlay = display_overlay_3D(image,Float64.(oscar_output))
         # display(overlay)
         oscar_output = Gray.(oscar_output./ maximum(oscar_output))
         Images.save("$result_path\\"*split(basename(path),".")[1]*".tif",oscar_output)
-        CSV.write("$result_path\\Summary_"*split(basename(path),".")[1]*".txt", summ, delim = '\t')
-        println("   >> " * string(length(objc3d.preok)) * " objects found.")
     else
         r = 0
         println("   (Performing 2D analysis)")
@@ -3465,7 +3465,6 @@ Optionally, each ellipse is labeled with its object ID.
 """
 function draw_3D_ellipses_from_summary(summary::DataFrame, dims::Tuple{Int, Int, Int}; label_ellipses::Bool=true)
     img = zeros(Int, dims)
-
     for row in eachrow(summary)
         cx, cy, cz = row.Xcenter, row.Ycenter, row.Zcenter
         a, b = row.A, row.B
@@ -3481,19 +3480,23 @@ function draw_3D_ellipses_from_summary(summary::DataFrame, dims::Tuple{Int, Int,
         #     continue
         # end
         v = [vx, vy] ./ v_mod
+        if any(isnan.(v))
+            v[findall(isnan.(v))] .= 0
+        end
+
         z_half = floor(Int, n_slices / 2)
         z_start = max(1, round(Int, cz) - z_half)
         z_end = min(dims[3], round(Int, cz) + z_half)
-
+        n_slices = z_end - z_start + 1
         for zi in z_start:z_end
             Δz = zi - cz
             factor = sqrt(1 - (2 * Δz / n_slices)^2)
             a_scaled = a * factor / 2
             b_scaled = b * factor / 2
-
+        
             x = cx + v[1] * Δz
             y = cy + v[2] * Δz
-
+    
             ellipse_coords = ellipse(round(Int, y), round(Int, x), b_scaled, a_scaled, ang)
             valid_coords = filter(p -> all(>(0), Tuple(p)) && p[1] ≤ dims[1] && p[2] ≤ dims[2], ellipse_coords)
             for p in valid_coords

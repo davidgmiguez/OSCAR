@@ -1,6 +1,6 @@
-# OSCAR v1.6.0 Release Notes
+# OSCAR v1.6.1 Release Notes
 
-We are pleased to announce the release of **OSCAR v1.6.0**. This version brings several improvements and new features:
+We are pleased to announce the release of **OSCAR v1.6.1**. This version brings several improvements and new features:
 
 - **Enhanced File Support:**  
   OSCAR now accepts both TIFF and TXT files. A new Fiji script is included to generate the necessary TXT files. Simply load your processed multichannel image in Fiji, and the script will produce the required TXT file, significantly increasing computational speed.
